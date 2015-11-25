@@ -1,8 +1,12 @@
 import akka.actor.*;
 import akka.event.*;
 import com.typesafe.config.ConfigFactory;
+import scala.Console;
 import scala.concurrent.duration.Duration;
 
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -11,16 +15,22 @@ import java.util.concurrent.TimeoutException;
  */
 public class PaymentTrackerServer {
     public static void main(String[] args) throws TimeoutException {
-        ActorSystem system = ActorSystem.create("PaymentTracker", ConfigFactory.load("server.conf"));
+        ActorSystem system = ActorSystem.create("PaymentTracker"/*, ConfigFactory.load("server.conf")*/);
         ActorRef router = system.actorOf(Props.create(Router.class), "router");
-
         Inbox inbox = Inbox.create(system);
-        LoggingAdapter logger = Logging.getLogger(system, inbox);
-        inbox.send(router, "hello world I want to track my money");
-        long time = System.currentTimeMillis();
-        Object receive = inbox.receive(Duration.create(5000, TimeUnit.MILLISECONDS));
-        logger.info("time: " + (System.currentTimeMillis() - time));
-        logger.info("the result is: " + receive);
+
+        ConsoleLogger consoleLogger=new ConsoleLogger(inbox);
+        ExecutorService executorService= Executors.newSingleThreadExecutor();
+        executorService.execute(consoleLogger);
+
+        Scanner in= new Scanner(System.in);
+        while(in.hasNextLine()){
+            inbox.send(router, in.nextLine());
+        }
+
+        System.out.println("closing...");
+        consoleLogger.setRunning(false);
+        executorService.shutdown();
         system.shutdown();
     }
 }
