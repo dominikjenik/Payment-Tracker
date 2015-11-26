@@ -50,3 +50,4 @@ elaboration
 -----------
 24.9. created project, github dir, added default akka config
 25.9. thread for console output received from inbox, sending messages from user to Router
+26.9. added debug logging, added quit msg

@@ -1,4 +1,6 @@
+import akka.actor.ActorSystem;
 import akka.actor.Inbox;
+import akka.event.Logging;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
@@ -9,14 +11,16 @@ import java.util.concurrent.TimeoutException;
  */
 public class ConsoleLogger implements Runnable {
     private Inbox inbox;
-    private volatile boolean running=true;
+    private volatile boolean running = true;
+    private ActorSystem system;
 
     public void setRunning(boolean running) {
         this.running = running;
     }
 
-    public ConsoleLogger(Inbox inbox) {
+    public ConsoleLogger(Inbox inbox, ActorSystem system) {
         this.inbox = inbox;
+        this.system = system;
     }
 
     public void run() {
@@ -26,10 +30,8 @@ public class ConsoleLogger implements Runnable {
                 Object receive = inbox.receive(Duration.create(5000, TimeUnit.MILLISECONDS));
                 System.out.println(receive);
             } catch (TimeoutException e) {
-//                e.printStackTrace();
-                System.out.println("waiting for response");
+                Logging.getLogger(system, inbox).debug("waiting for response");
             }
         }
-//        System.out.println("closing logger");
     }
 }
