@@ -49,5 +49,7 @@ HKD 300 (USD 38.62)
 elaboration
 -----------
 24.9. created project, github dir, added default akka config
-25.9. thread for console output received from inbox, sending messages from user to Router
-26.9. added debug logging, added quit msg
+
+25.9. thread for console output received from inbox, sending messages from user to actors.Router
+
+26.9. added debug logging, added quit msg, created input pattern
