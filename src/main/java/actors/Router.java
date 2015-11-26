@@ -8,6 +8,8 @@ import akka.actor.UntypedActor;
 public class Router extends UntypedActor {
     private String inputPattern= "([A-Z]{3}) (([+]?[\\d*\\.?[0-9]*) (\\(USD ([\\d*\\.?[0-9]*)\\))?|([+-]?[\\d*\\.?[0-9]*))";
 
+
+
     @Override
     public void onReceive(Object o) throws Exception {
         System.out.println(o);
