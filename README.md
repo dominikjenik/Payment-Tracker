@@ -53,3 +53,6 @@ elaboration
 25.9. thread for console output received from inbox, sending messages from user to actors.Router
 
 26.9. added debug logging, added quit msg, created input pattern
+
+27.9. from thread for consoled output made actor, FileHandler actor for reading file, 
+TransactionCounter for holding info about transactions
