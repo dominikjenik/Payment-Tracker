@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import messages.*;
 import messages.interfaces.ConsoleMessageI;
+import messages.interfaces.FileHandlerMessageI;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
@@ -25,8 +26,8 @@ public class Router extends UntypedActor {
         fileHandler = getContext().actorOf(Props.create(FileHandler.class), FileHandler.class.getName());
         consoleOutputer = getContext().actorOf(Props.create(ConsoleOutputer.class), ConsoleOutputer.class.getName());
         transactionCounter = getContext().actorOf(Props.create(TransactionCounter.class), TransactionCounter.class.getName());
-        fileHandler.tell(new ReadFileMessage(), getSelf());
-        getContext().system().scheduler().schedule(Duration.Zero(), LIST_PAYMENTS_TO_OUTPUT_PERIOD_IN_SECONDS,
+        getContext().system().scheduler().schedule(LIST_PAYMENTS_TO_OUTPUT_PERIOD_IN_SECONDS,
+                LIST_PAYMENTS_TO_OUTPUT_PERIOD_IN_SECONDS,
                 getSelf(), new TickMessage(), getContext().system().dispatcher(), null);
     }
 
@@ -36,7 +37,7 @@ public class Router extends UntypedActor {
             consoleOutputer.tell(o, getSelf());
         } else if (o instanceof PaymentMessage || o instanceof TickMessage) {
             transactionCounter.tell(o, getSelf());
-        } else if (o instanceof SavePaymentMessage) {
+        } else if (o instanceof FileHandlerMessageI) {
             fileHandler.tell(o, getSelf());
         } else {
             unhandled(o);

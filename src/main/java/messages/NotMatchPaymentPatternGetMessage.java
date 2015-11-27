@@ -7,13 +7,15 @@ import messages.interfaces.ConsoleMessageI;
  */
 public class NotMatchPaymentPatternGetMessage extends Exception implements ConsoleMessageI {
     private final String message;
+    private String errorMessage;
 
-    public NotMatchPaymentPatternGetMessage(String message) {
+    public NotMatchPaymentPatternGetMessage(String message, String errorMessage) {
         this.message = message;
+        this.errorMessage = errorMessage;
     }
 
     @Override
     public String getMessage() {
-        return "Message: "+message+" does not match pattern. Use 'help' to get list of example messsages";
+        return errorMessage+" Message: "+message+" does not match pattern. Use 'help' to get list of example messages.";
     }
 }

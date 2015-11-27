@@ -70,3 +70,4 @@ appending to file newest messages, added transaction logic with tests, pattern c
 adding scheduler for regular output, creating list of payment messages for output
 adding test for output payment messages, 
 correcting messages and actors ownership, fixed zero when creating payment track, replacing junit by testng
+solving problem with duplicit loading files, routing based on interfaces, reading different that default file

@@ -18,16 +18,29 @@ public class PaymentMessage {
     public static final int PAYMENT_IN_USD_GROUP_IN_PATTERN = 6;
 
     private final String message;
+    private boolean saveToFile=true;
 
     public PaymentMessage(String message) throws NotMatchPaymentPatternGetMessage {
+        this(message,null, true);
+    }
+
+    public PaymentMessage(String message, String errorMessage) throws NotMatchPaymentPatternGetMessage {
+        this(message,errorMessage, true);
+    }
+
+    public PaymentMessage(String message, String errorMessage, boolean saveToFile) throws NotMatchPaymentPatternGetMessage {
+        this.saveToFile = saveToFile;
         if (!inputPattern.matcher(message).find()) {
-            throw new NotMatchPaymentPatternGetMessage(message);
+            throw new NotMatchPaymentPatternGetMessage(message,errorMessage);
         }
         this.message = message;
 
     }
-
     public String getMessage() {
         return message;
+    }
+
+    public boolean isSaveToFile() {
+        return saveToFile;
     }
 }

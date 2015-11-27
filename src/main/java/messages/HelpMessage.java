@@ -2,6 +2,7 @@ package messages;
 
 import com.google.common.collect.Lists;
 import messages.interfaces.ConsoleMessageI;
+import runner.PaymentTrackerRunner;
 
 import java.util.List;
 
@@ -46,11 +47,18 @@ public class HelpMessage implements ConsoleMessageI {
     }
 
     public String getMessage() {
-        return new StringBuilder("List of examples of allowed messages:")
+        return new StringBuilder("List of examples of valid messages:")
                 .append(validList)
                 .append("\n")
                 .append("List of examples of not allowed messages:")
                 .append(invalidList)
-                .append("\n").toString();
+                .append("\n")
+                .append("List of invalid commands: ")
+                .append(PaymentTrackerRunner.HELP_MESSAGE)
+                .append(", ")
+                .append(PaymentTrackerRunner.PRINT_MESSAGE)
+                .append(", ")
+                .append(PaymentTrackerRunner.TERMINATE_MESSAGE)
+                .toString();
     }
 }
