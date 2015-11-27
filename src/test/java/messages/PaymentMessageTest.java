@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static messages.PaymentMessage.inputPattern;
 
@@ -13,6 +14,21 @@ import static messages.PaymentMessage.inputPattern;
  * Created by Jenik on 11/27/2015.
  */
 public class PaymentMessageTest {
+    @Test
+    public void testGroupsInMatcher() throws NotMatchPaymentPatternMessage {
+        Matcher matcher = inputPattern.matcher("RMB 2000 (USD 314.60)");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("RMB 2000 (USD 314.60)", matcher.group(0));
+        Assert.assertEquals("RMB",matcher.group(1));
+        Assert.assertEquals("2000",matcher.group(2));
+        Assert.assertEquals("314.60",matcher.group(5));
+
+        matcher = inputPattern.matcher("RMB 2000");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("RMB 2000",matcher.group(0));
+        Assert.assertEquals("RMB",matcher.group(1));
+        Assert.assertEquals("2000",matcher.group(2));
+    }
 
     @Test
     public void testPaymentMessageObject() throws NotMatchPaymentPatternMessage {
