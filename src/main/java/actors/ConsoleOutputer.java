@@ -3,6 +3,7 @@ package actors;
 import akka.actor.UntypedActor;
 import com.google.common.collect.Lists;
 import messages.HelpMessage;
+import messages.PaymentsOverviewMessage;
 
 import java.util.List;
 
@@ -49,12 +50,13 @@ public class ConsoleOutputer extends UntypedActor {
     @Override
     public void onReceive(Object o) throws Exception {
         if (o instanceof HelpMessage) {
-            System.out.println("List of examples of allowed messages:"+validList);
-            System.out.println("List of examples of not allowed messages:"+invalidList);
+            System.out.println("List of examples of allowed messages:" + validList);
+            System.out.println("List of examples of not allowed messages:" + invalidList);
 
-        } else {
+        } else if (o instanceof PaymentsOverviewMessage) {
+            System.out.println(((PaymentsOverviewMessage) o).getMessage());
+        } else
             System.out.println(o);
-        }
     }
 
 }

@@ -14,8 +14,7 @@ public class PaymentsOverviewMessage {
         this.paymentMessages = ImmutableList.copyOf(list);
     }
 
-    @Override
-    public String toString() {
+    public String getMessage() {
         StringBuilder sb=new StringBuilder();
         sb.append("\nPayments:\n");
         sb.append("---------\n");

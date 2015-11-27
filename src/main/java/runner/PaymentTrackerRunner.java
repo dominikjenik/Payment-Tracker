@@ -9,6 +9,7 @@ import com.typesafe.config.ConfigFactory;
 import messages.HelpMessage;
 import messages.NotMatchPaymentPatternMessage;
 import messages.PaymentMessage;
+import messages.TickMessage;
 
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
@@ -20,6 +21,7 @@ public class PaymentTrackerRunner {
 
     public static final String TERMINATE_MESSAGE = "quit";
     public static final String HELP_MESSAGE = "help";
+    public static final String PRINT_MESSAGE = "print";
     public static final String PAYMENT_TRACKER_SYSTEM = "PaymentTracker";
     public static final String PAYMENT_TRACKER_SYSTEM_ACTORS_ADDRESS
             = "akka://" + PaymentTrackerRunner.PAYMENT_TRACKER_SYSTEM + "/user/";
@@ -37,6 +39,10 @@ public class PaymentTrackerRunner {
             }
             if (HELP_MESSAGE.equals(line)) {
                 inbox.send(router, new HelpMessage());
+                continue;
+            }
+            if (PRINT_MESSAGE.equals(line)) {
+                inbox.send(router, new TickMessage());
                 continue;
             }
             try {

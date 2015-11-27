@@ -54,8 +54,8 @@ public class TransactionCounter extends UntypedActor {
             String conversion = "";
             if (exchangeRateFromXToUsd.get(currencyAndAmount.getKey())!= null) {
                 BigDecimal exchangedToDollar=currencyAndAmount.getValue().multiply(exchangeRateFromXToUsd.get(currencyAndAmount.getKey()))
-                        .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs();
-                conversion = "(USD "+exchangedToDollar.toPlainString()+")";
+                        .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs().stripTrailingZeros();
+                conversion = " (USD "+exchangedToDollar.toPlainString()+")";
             }
             paymentMessages.add(new PaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
         }
