@@ -19,9 +19,9 @@ public class PaymentMessage {
 
     private final String message;
 
-    public PaymentMessage(String message) throws NotMatchPaymentPatternMessage {
+    public PaymentMessage(String message) throws NotMatchPaymentPatternGetMessage {
         if (!inputPattern.matcher(message).find()) {
-            throw new NotMatchPaymentPatternMessage(message);
+            throw new NotMatchPaymentPatternGetMessage(message);
         }
         this.message = message;
 

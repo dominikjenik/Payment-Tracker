@@ -1,13 +1,14 @@
 package messages;
 
 import com.google.common.collect.ImmutableList;
+import messages.interfaces.ConsoleMessageI;
 
 import java.util.List;
 
 /**
  * Created by Jenik on 11/27/2015.
  */
-public class PaymentsOverviewMessage {
+public class PaymentsOverviewMessage implements ConsoleMessageI {
     private final ImmutableList<PaymentMessage> paymentMessages;
 
     public PaymentsOverviewMessage(List<PaymentMessage> list) {
@@ -19,7 +20,7 @@ public class PaymentsOverviewMessage {
         sb.append("\nPayments:\n");
         sb.append("---------\n");
         for (PaymentMessage paymentMessage: paymentMessages){
-            sb.append(paymentMessage).append("\n");
+            sb.append(paymentMessage.getMessage()).append("\n");
         }
         sb.append("---------\n");
         return sb.toString();

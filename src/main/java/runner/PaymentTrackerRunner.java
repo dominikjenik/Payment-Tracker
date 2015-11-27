@@ -7,7 +7,7 @@ import akka.actor.Inbox;
 import akka.actor.Props;
 import com.typesafe.config.ConfigFactory;
 import messages.HelpMessage;
-import messages.NotMatchPaymentPatternMessage;
+import messages.NotMatchPaymentPatternGetMessage;
 import messages.PaymentMessage;
 import messages.TickMessage;
 
@@ -47,7 +47,7 @@ public class PaymentTrackerRunner {
             }
             try {
                 inbox.send(router, new PaymentMessage(line));
-            } catch (NotMatchPaymentPatternMessage e) {
+            } catch (NotMatchPaymentPatternGetMessage e) {
                 inbox.send(router, e);
             }
         }
