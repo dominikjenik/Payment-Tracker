@@ -28,17 +28,23 @@ public class PaymentMessageTest {
         Assert.assertTrue("HKD 200".matches(inputPattern));
         Assert.assertTrue("HKD +200".matches(inputPattern));
         Assert.assertTrue("RMB 2000 (USD 314.60)".matches(inputPattern));
+        Assert.assertTrue("RMB -2000 (USD 314.60)".matches(inputPattern));
         Assert.assertTrue("RMB    2000   (USD    314.60)".matches(inputPattern));
         Assert.assertTrue("HKD 300 (USD 38.62)".matches(inputPattern));
         Assert.assertTrue("HKD 12345678901234567890123456789012 (USD 38.62)".matches(inputPattern));
         Assert.assertTrue("HKD 12345678901234567890123456789012.1234 (USD 38.62)".matches(inputPattern));
 
         Assert.assertFalse("US 1000".matches(inputPattern));
+        Assert.assertFalse("USD 1000\nUSD 1000".matches(inputPattern));
+        Assert.assertFalse("USD 1000 USD 1000".matches(inputPattern));
+        Assert.assertFalse("USDOLAR 1000".matches(inputPattern));
         Assert.assertFalse("RMB +2000 (USD +314.60)".matches(inputPattern));
+        Assert.assertFalse("RMB +2000 (USD -314.60)".matches(inputPattern));
+        Assert.assertFalse("RMB -2000 (USD +314.60)".matches(inputPattern));
+        Assert.assertFalse("RMB -2000 (USD -314.60)".matches(inputPattern));
         Assert.assertFalse("RMB +2000 (US 314.60)".matches(inputPattern));
         Assert.assertFalse("HKD 123456789012345678901234567890123.0000".matches(inputPattern));
         Assert.assertFalse("HKD 123456789012345678901234567890123.00005".matches(inputPattern));
         Assert.assertFalse("HKD 1234567890123456789012345678901234567 (USD 38.62)".matches(inputPattern));
-
     }
 }
