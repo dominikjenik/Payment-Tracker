@@ -1,6 +1,5 @@
 package actors;
 
-import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
 import messages.FileNotFoundMessage;
@@ -19,28 +18,36 @@ import java.io.FileNotFoundException;
 public class FileHandler extends UntypedActor {
 
     private File file = new File("save.txt");
+    private ActorSelection transactionCounter;
+    private ActorSelection consoleOutputer;
 
+    @Override
+    public void preStart() throws Exception {
+        super.preStart();
+        transactionCounter = context().actorSelection(
+                PaymentTrackerRunner.PAYMENT_TRACKER_SYSTEM_ACTORS_ADDRESS + TransactionCounter.class.getName());
+        consoleOutputer = context().actorSelection(
+                PaymentTrackerRunner.PAYMENT_TRACKER_SYSTEM_ACTORS_ADDRESS + ConsoleOutputer.class.getName());
+    }
 
     @Override
     public void onReceive(Object o) throws Exception {
         if (o instanceof ReadFileMessage) {
             try {
                 final String fileToString = FileUtils.readFileToString(file);
-                ActorSelection transactionCounter = context().actorSelection(
-                        PaymentTrackerRunner.PAYMENT_TRACKER_SYSTEM_ACTORS_ADDRESS + TransactionCounter.class.getName());
-                ActorSelection consoleOutputer = context().actorSelection(
-                        PaymentTrackerRunner.PAYMENT_TRACKER_SYSTEM_ACTORS_ADDRESS + ConsoleOutputer.class.getName());
-
                 for (String line : fileToString.split("\n")) {
-                    try{
-                        transactionCounter.tell(new PaymentMessage(line),getSelf());
-                    } catch (NotMatchPaymentPatternMessage  e){
-                        consoleOutputer.tell(e,getSelf());
+                    try {
+                        transactionCounter.tell(new PaymentMessage(line), getSelf());
+                    } catch (NotMatchPaymentPatternMessage e) {
+                        consoleOutputer.tell(e, getSelf());
                     }
                 }
             } catch (FileNotFoundException e) {
                 getContext().parent().tell(new FileNotFoundMessage(), getSelf());
             }
+        } else if (o instanceof PaymentMessage) {
+            String message = ((PaymentMessage) o).getMessage();
+            FileUtils.writeStringToFile(file, message, true);
         } else {
             unhandled(o);
         }

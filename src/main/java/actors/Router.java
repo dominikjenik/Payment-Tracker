@@ -3,10 +3,7 @@ package actors;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import messages.FileNotFoundMessage;
-import messages.NotMatchPaymentPatternMessage;
-import messages.PaymentMessage;
-import messages.ReadFileMessage;
+import messages.*;
 
 /**
  * Created by Jenik on 11/24/2015.
@@ -24,7 +21,7 @@ public class Router extends UntypedActor {
 
     @Override
     public void onReceive(Object o) throws Exception {
-        if (o instanceof FileNotFoundMessage || o instanceof NotMatchPaymentPatternMessage) {
+        if (o instanceof FileNotFoundMessage || o instanceof NotMatchPaymentPatternMessage || o instanceof HelpMessage) {
             consoleOutputer.tell(o, getSelf());
         } else if (o instanceof PaymentMessage) {
             transactionCounter.tell(o, getSelf());

@@ -46,15 +46,25 @@ USD 900
 RMB 2000 (USD 314.60)
 HKD 300 (USD 38.62)
 
+Assumptions
+-----------
+- User can write exchange rate only absolute value without + or - mark. 
+For transaction is only important the sign on amount.
+e. g. HKD -300 (USD -38.62) is invalid, use instead HKD -300 (USD 38.62)
+- max amount is 10^32 with 4 decimal places
+- for see examples of valid and invalid messages type "help"
+
 elaboration
 -----------
-24.9. created project, github dir, added default akka config
+24.9.15 created project, github dir, added default akka config
 
-25.9. thread for console output received from inbox, sending messages from user to actors.Router
+25.9.15 thread for console output received from inbox, sending messages from user to actors.Router
 
-26.9. added debug logging, added quit msg, created input pattern
+26.9.15 added debug logging, added quit msg, created input pattern
 
-27.9. from thread for consoled output made actor, FileHandler actor for reading file, 
+27.9.15 from thread for consoled output made actor, FileHandler actor for reading file, 
 TransactionCounter for holding info about transactions, added testing with TESTNG, 
 added test for pattern, pattern modified, added Message about not match pattern and for hold payment data,
-coderef pattern unittest, added group to pattern, tested mnatcher groups 
+code-ref pattern unit-test, added group to pattern, tested matcher groups,
+appending to file newest messages, added transaction logic with tests, pattern changes, added help command, 
+
