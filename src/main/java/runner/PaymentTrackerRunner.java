@@ -6,6 +6,8 @@ import akka.actor.ActorSystem;
 import akka.actor.Inbox;
 import akka.actor.Props;
 import com.typesafe.config.ConfigFactory;
+import messages.NotMatchPaymentPatternMessage;
+import messages.PaymentMessage;
 
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
@@ -22,7 +24,7 @@ public class PaymentTrackerRunner {
 
     public static void main(String[] args) throws TimeoutException {
         ActorSystem system = ActorSystem.create(PAYMENT_TRACKER_SYSTEM, ConfigFactory.load("debug.conf"));
-        ActorRef router = system.actorOf(Props.create(Router.class),Router.class.getName());
+        ActorRef router = system.actorOf(Props.create(Router.class), Router.class.getName());
 
         Inbox inbox = Inbox.create(system);
         Scanner in = new Scanner(System.in);
@@ -31,7 +33,11 @@ public class PaymentTrackerRunner {
             if (TERMINATE_MESSAGE.equals(line)) {
                 break;
             }
-            inbox.send(router, line);
+            try {
+                inbox.send(router, new PaymentMessage(line));
+            } catch (NotMatchPaymentPatternMessage e) {
+                inbox.send(router, e);
+            }
         }
         System.out.println("closing...");
         system.shutdown();
