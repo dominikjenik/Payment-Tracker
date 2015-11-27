@@ -6,17 +6,17 @@ Write a program that keeps a record of payments. Each payment includes a currenc
 The program should output a list of all the currency and amounts to the console once per minute.
 The input can be typed into the command line, and optionally also be loaded from a file when starting up.
 
-Sample input:
-USD 1000
-HKD 100
-USD -100
-RMB 2000
-HKD 200
+Sample input:  
+USD 1000  
+HKD 100  
+USD -100  
+RMB 2000  
+HKD 200  
 
-Sample output:
-USD 900
-RMB 2000
-HKD 300
+Sample output:  
+USD 900  
+RMB 2000  
+HKD 300  
 
 Detailed requirements
 When your Java program is run, a filename can be optionally specified.
@@ -41,10 +41,10 @@ Include instructions on how to run your program.
 
 Optional bonus question
 Allow each currency to have the exchange rate compared to USD configured. When you display the output,
-write the USD equivalent amount next to it, for example:
-USD 900
-RMB 2000 (USD 314.60)
-HKD 300 (USD 38.62)
+write the USD equivalent amount next to it, for example:  
+USD 900  
+RMB 2000 (USD 314.60)  
+HKD 300 (USD 38.62)  
 
 Assumptions
 -----------
