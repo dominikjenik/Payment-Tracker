@@ -67,4 +67,5 @@ TransactionCounter for holding info about transactions, added testing with TESTN
 added test for pattern, pattern modified, added Message about not match pattern and for hold payment data,
 code-ref pattern unit-test, added group to pattern, tested matcher groups,
 appending to file newest messages, added transaction logic with tests, pattern changes, added help command, 
+adding scheduler for regular output, creating list of payment messages for output
 

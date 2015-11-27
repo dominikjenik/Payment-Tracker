@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
  * Created by Jenik on 11/27/2015.
  */
 public class PaymentMessage {
-    private final static int DIGITS_BEFORE_DOT = 32;
-    private static final int DIGITS_AFTER_DOT = 4;
+    public final static int DIGITS_BEFORE_DOT = 32;
+    public final static int DIGITS_AFTER_DOT = 4;
     private final static String CASH_PATTERN = "(?=.*[1-9])\\d{1," + DIGITS_BEFORE_DOT + "}(\\.\\d{0," + DIGITS_AFTER_DOT + "})?";
     private final static String INPUT_PATTERN_STRING =
             "^(?!USD.*USD)([A-Z]{3})\\ *([+-]?(" + CASH_PATTERN + "))\\ *(\\(USD\\ *(" + CASH_PATTERN + ")\\))?$";

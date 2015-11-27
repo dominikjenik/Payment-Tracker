@@ -3,7 +3,7 @@ package messages;
 /**
  * Created by Jenik on 11/27/2015.
  */
-public class NotMatchPaymentPatternMessage extends Throwable {
+public class NotMatchPaymentPatternMessage extends Exception {
     private final String message;
 
     public NotMatchPaymentPatternMessage(String message) {

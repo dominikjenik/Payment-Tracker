@@ -4,6 +4,9 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import messages.*;
+import scala.concurrent.duration.Duration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jenik on 11/24/2015.
@@ -17,6 +20,8 @@ public class Router extends UntypedActor {
     public void preStart() throws Exception {
         super.preStart();
         fileHandler.tell(new ReadFileMessage(), getSelf());
+        getContext().system().scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS),
+                getSelf(), new TickMessage(), getContext().system().dispatcher(), null);
     }
 
     @Override
@@ -25,7 +30,10 @@ public class Router extends UntypedActor {
             consoleOutputer.tell(o, getSelf());
         } else if (o instanceof PaymentMessage) {
             transactionCounter.tell(o, getSelf());
-        } else {
+        } else if (o instanceof TickMessage){
+            transactionCounter.tell(o,getSelf());
+        }
+        else {
             consoleOutputer.tell("Yeah sure sir", getSelf());
         }
     }
