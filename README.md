@@ -56,4 +56,5 @@ elaboration
 
 27.9. from thread for consoled output made actor, FileHandler actor for reading file, 
 TransactionCounter for holding info about transactions, added testing with TESTNG, 
-added test for pattern, pattern modified, added Message about not match pattern and for hold payment data
+added test for pattern, pattern modified, added Message about not match pattern and for hold payment data,
+coderef pattern unittest, added group to pattern, 
