@@ -10,7 +10,7 @@ import java.io.File;
 public class ReadFileMessage implements FileHandlerMessageI {
     private final File file;
 
-    public ReadFileMessage(String file) {
+    ReadFileMessage(String file) {
         this.file = new File(file);
     }
 

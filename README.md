@@ -73,4 +73,5 @@ adding test for output payment messages,
 correcting messages and actors ownership, fixed zero when creating payment track, replacing junit by testng
 solving problem with duplicate loading files, routing based on interfaces, reading different that default file
 
-28.9.15 default configuration without debugging config, building project into jar
+28.9.15 default configuration without debugging config, building project into jar,
+added Factory design pattern

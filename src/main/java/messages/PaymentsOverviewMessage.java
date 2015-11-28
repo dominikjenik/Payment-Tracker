@@ -11,7 +11,7 @@ import java.util.List;
 public class PaymentsOverviewMessage implements ConsoleMessageI {
     private final ImmutableList<PaymentMessage> paymentMessages;
 
-    public PaymentsOverviewMessage(List<PaymentMessage> list) {
+    PaymentsOverviewMessage(List<PaymentMessage> list) {
         this.paymentMessages = ImmutableList.copyOf(list);
     }
 

@@ -8,7 +8,7 @@ import messages.interfaces.ConsoleMessageI;
 public class FileNotFoundMessage implements ConsoleMessageI {
     private final String file;
 
-    public FileNotFoundMessage(String file) {
+    FileNotFoundMessage(String file) {
         this.file = file;
     }
 

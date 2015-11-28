@@ -8,7 +8,7 @@ import messages.interfaces.FileHandlerMessageI;
 public class SavePaymentMessage implements FileHandlerMessageI {
     private final PaymentMessage paymentMessage;
 
-    public SavePaymentMessage(PaymentMessage paymentMessage) {
+    SavePaymentMessage(PaymentMessage paymentMessage) {
         this.paymentMessage = paymentMessage;
     }
 

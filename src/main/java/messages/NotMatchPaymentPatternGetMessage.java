@@ -9,7 +9,7 @@ public class NotMatchPaymentPatternGetMessage extends Exception implements Conso
     private final String message;
     private String errorMessage;
 
-    public NotMatchPaymentPatternGetMessage(String message, String errorMessage) {
+    NotMatchPaymentPatternGetMessage(String message, String errorMessage) {
         this.message = message;
         this.errorMessage = errorMessage;
     }

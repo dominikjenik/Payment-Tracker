@@ -24,7 +24,7 @@ public class FileHandler extends UntypedActor {
                         continue;
                     }
                     try {
-                        getSender().tell(new PaymentMessage(line,
+                        getSender().tell(MessagesFactory.newPaymentMessage(line,
                                 "Could not load from file '" + file.getAbsolutePath() + "'.",
                                 false), getSelf());
                     } catch (NotMatchPaymentPatternGetMessage e) {
@@ -32,7 +32,7 @@ public class FileHandler extends UntypedActor {
                     }
                 }
             } catch (FileNotFoundException e) {
-                getContext().parent().tell(new FileNotFoundMessage(file.getAbsolutePath()), getSelf());
+                getContext().parent().tell(MessagesFactory.newFileNotFoundMessage(file.getAbsolutePath()), getSelf());
             }
         } else if (o instanceof SavePaymentMessage && ((SavePaymentMessage) o).getPaymentMessage().isSaveToFile()) {
             String message = "\n" + ((SavePaymentMessage) o).getPaymentMessage().getMessage();

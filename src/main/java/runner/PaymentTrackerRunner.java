@@ -33,9 +33,9 @@ public class PaymentTrackerRunner {
         if ("y".equals(in.nextLine())) {
             System.out.println("Please write new file name:");
             String input = in.nextLine();
-            inbox.send(router, new ReadFileMessage(input));
+            inbox.send(router, MessagesFactory.newReadFileMessage(input));
         } else {
-            inbox.send(router, new ReadFileMessage("save.txt"));
+            inbox.send(router, MessagesFactory.newReadFileMessage("save.txt"));
         }
         while (in.hasNextLine()) {
             final String line = in.nextLine();
@@ -43,15 +43,15 @@ public class PaymentTrackerRunner {
                 break;
             }
             if (HELP_MESSAGE.equals(line)) {
-                inbox.send(router, new HelpMessage());
+                inbox.send(router, MessagesFactory.newHelpMessage());
                 continue;
             }
             if (PRINT_MESSAGE.equals(line)) {
-                inbox.send(router, new TickMessage());
+                inbox.send(router, MessagesFactory.newTickMessage());
                 continue;
             }
             try {
-                inbox.send(router, new PaymentMessage(line, "Wrong format of input from console. "));
+                inbox.send(router, MessagesFactory.newPaymentMessage(line, "Wrong format of input from console. "));
             } catch (NotMatchPaymentPatternGetMessage e) {
                 inbox.send(router, e);
             }

@@ -20,18 +20,10 @@ public class PaymentMessage {
     private final String message;
     private boolean saveToFile=true;
 
-    public PaymentMessage(String message) throws NotMatchPaymentPatternGetMessage {
-        this(message,null, true);
-    }
-
-    public PaymentMessage(String message, String errorMessage) throws NotMatchPaymentPatternGetMessage {
-        this(message,errorMessage, true);
-    }
-
-    public PaymentMessage(String message, String errorMessage, boolean saveToFile) throws NotMatchPaymentPatternGetMessage {
+    PaymentMessage(String message, String errorMessage, boolean saveToFile) throws NotMatchPaymentPatternGetMessage {
         this.saveToFile = saveToFile;
         if (!inputPattern.matcher(message).find()) {
-            throw new NotMatchPaymentPatternGetMessage(message,errorMessage);
+            throw MessagesFactory.newNotMatchPaymentPatternGetMessage(message,errorMessage);
         }
         this.message = message;
 

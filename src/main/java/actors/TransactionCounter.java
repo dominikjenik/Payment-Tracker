@@ -20,19 +20,6 @@ public class TransactionCounter extends UntypedActor {
     private Map<String, BigDecimal> currencyToAmount = Maps.newHashMap();
     private Map<String, BigDecimal> exchangeRateFromXToUsd = Maps.newHashMap();
 
-    @Override
-    public void onReceive(Object o) throws Exception {
-        if (o instanceof PaymentMessage) {
-            performTransaction(((PaymentMessage) o).getMessage(), currencyToAmount, exchangeRateFromXToUsd);
-            getSender().tell(new SavePaymentMessage((PaymentMessage) o), getSelf());
-        } else if (o instanceof TickMessage) {
-            List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
-            getSender().tell(new PaymentsOverviewMessage(paymentMessages), getSelf());
-        } else {
-            unhandled(o);
-        }
-    }
-
     public static List<PaymentMessage> getPaymentMessages(Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> exchangeRateFromXToUsd) throws NotMatchPaymentPatternGetMessage {
         List<PaymentMessage> paymentMessages = Lists.newArrayList();
         for (Map.Entry<String, BigDecimal> currencyAndAmount : currencyToAmount.entrySet()) {
@@ -45,7 +32,7 @@ public class TransactionCounter extends UntypedActor {
                         .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs().stripTrailingZeros();
                 conversion = " (USD " + exchangedToDollar.toPlainString() + ")";
             }
-            paymentMessages.add(new PaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
+            paymentMessages.add(MessagesFactory.newPaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
         }
         return paymentMessages;
     }
@@ -65,6 +52,19 @@ public class TransactionCounter extends UntypedActor {
         if (paymentInUsd != null) {
             BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs());
             currencyToExchangeRate.put(paymentCurrency, conversionRate);
+        }
+    }
+
+    @Override
+    public void onReceive(Object o) throws Exception {
+        if (o instanceof PaymentMessage) {
+            performTransaction(((PaymentMessage) o).getMessage(), currencyToAmount, exchangeRateFromXToUsd);
+            getSender().tell(MessagesFactory.newSavePaymentMessage((PaymentMessage) o), getSelf());
+        } else if (o instanceof TickMessage) {
+            List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
+            getSender().tell(MessagesFactory.newPaymentsOverviewMessage(paymentMessages), getSelf());
+        } else {
+            unhandled(o);
         }
     }
 }

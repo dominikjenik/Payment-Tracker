@@ -46,6 +46,10 @@ public class HelpMessage implements ConsoleMessageI {
         invalidList.add("HKD 1234567890123456789012345678901234567 (USD 38.62)");
     }
 
+    HelpMessage() {
+        super();
+    }
+
     public String getMessage() {
         return new StringBuilder("List of examples of valid messages:")
                 .append(validList)

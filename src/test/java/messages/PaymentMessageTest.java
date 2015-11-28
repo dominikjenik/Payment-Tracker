@@ -32,12 +32,12 @@ public class PaymentMessageTest {
 
     @Test
     public void testPaymentMessageObject() throws NotMatchPaymentPatternGetMessage {
-        new PaymentMessage("USD 1000");
+        MessagesFactory.newPaymentMessage("USD 1000");
     }
 
     @Test(expectedExceptions = NotMatchPaymentPatternGetMessage.class)
     public void testPaymentMessageObjectException() throws NotMatchPaymentPatternGetMessage {
-        new PaymentMessage("U S D 1000");
+        MessagesFactory.newPaymentMessage("U S D 1000");
     }
 
     @Test
