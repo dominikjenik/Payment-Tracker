@@ -46,6 +46,19 @@ USD 900
 RMB 2000 (USD 314.60)  
 HKD 300 (USD 38.62)  
 
+How to install and run
+----------------------
+1. 'git clone https://github.com/dominikjenik/Payment-Tracker.git'
+2. 'cd Payment-Tracker' directory
+3. 'mvn package'
+4. 'cd target' folder
+5. 'java -jar payment_tracker-1.0-jar-with-dependencies.jar' [input filename] 
+
+Assumptions for running the program
+-----------------------------------
+java 8
+maven 3.x
+
 Assumptions
 -----------
 - User can write exchange rate only absolute value without + or - mark. 

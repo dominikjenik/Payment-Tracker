@@ -10,9 +10,7 @@ public interface OutputMessages {
             "=========================\n" +
             "anytime use 'help' to get instructions";
     String LOADING_MESSAGE = "loading...";
-    String PLEASE_WRITE_NEW_FILE_NAME_MESSAGE = "Please write new file name:";
     String WRONG_FORMAT_OF_INPUT_MESSAGE = "Wrong format of input. ";
     String CLOSING_MESSAGE = "closing...";
-    String LOAD_FILE_MESSAGE= "Would you like to change default file? y/n";
 
 }

@@ -27,17 +27,25 @@ public class PaymentTrackerRunner {
         ActorSystem system = ActorSystem.create(PAYMENT_TRACKER_SYSTEM, ConfigFactory.defaultApplication());
         ActorRef router = system.actorOf(Props.create(RouterActor.class), RouterActor.class.getName());
         Inbox inbox = Inbox.create(system);
-        System.out.println(
-                WELCOME_MESSAGE);
-        System.out.println(LOAD_FILE_MESSAGE);
-        Scanner in = new Scanner(System.in);
-        if ("y".equals(in.nextLine())) {
-            System.out.println(PLEASE_WRITE_NEW_FILE_NAME_MESSAGE);
-            String input = in.nextLine();
-            inbox.send(router, MessagesFactory.newReadFileMessage(input));
-        } else {
+
+        System.out.println(WELCOME_MESSAGE);
+        loadFromFile(args, router, inbox);
+        readInputFromUser(router, inbox);
+
+        System.out.println(CLOSING_MESSAGE);
+        system.terminate();
+    }
+
+    public static void loadFromFile(String[] args, ActorRef router, Inbox inbox) {
+        if (args.length!=0){
+            inbox.send(router, MessagesFactory.newReadFileMessage(args[0]));;
+        }else {
             inbox.send(router, MessagesFactory.newReadFileMessage("save.txt"));
         }
+    }
+
+    public static void readInputFromUser(ActorRef router, Inbox inbox) {
+        Scanner in = new Scanner(System.in);
         while (in.hasNextLine()) {
             final String line = in.nextLine();
             if (TERMINATE_MESSAGE.equals(line)) {
@@ -57,8 +65,6 @@ public class PaymentTrackerRunner {
                 inbox.send(router, e);
             }
         }
-        System.out.println(CLOSING_MESSAGE);
-        system.terminate();
     }
 
 }
