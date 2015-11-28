@@ -9,7 +9,6 @@ import com.typesafe.config.ConfigFactory;
 import messages.*;
 
 import java.util.Scanner;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Jenik on 11/24/2015.
@@ -21,13 +20,14 @@ public class PaymentTrackerRunner {
     public static final String PRINT_MESSAGE = "print";
     public static final String PAYMENT_TRACKER_SYSTEM = "PaymentTracker";
 
-    public static void main(String[] args) throws TimeoutException {
-        System.out.println("Welcome to "+PAYMENT_TRACKER_SYSTEM);
-        System.out.println("=========================");
-        ActorSystem system = ActorSystem.create(PAYMENT_TRACKER_SYSTEM, ConfigFactory.load("debug.conf"));
+    public static void main(String[] args)  {
+        System.out.println("loading...");
+        ActorSystem system = ActorSystem.create(PAYMENT_TRACKER_SYSTEM, ConfigFactory.defaultApplication());
         ActorRef router = system.actorOf(Props.create(Router.class), Router.class.getName());
         Inbox inbox = Inbox.create(system);
-
+        System.out.println("Welcome to "+PAYMENT_TRACKER_SYSTEM);
+        System.out.println("=========================");
+        System.out.println("anytime use 'help' to get instructions");
         System.out.println("Would you like to change default file? y/n");
         Scanner in = new Scanner(System.in);
         if ("y".equals(in.nextLine())) {

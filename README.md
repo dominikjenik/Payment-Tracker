@@ -53,6 +53,7 @@ For transaction is only important the sign on amount.
 e. g. HKD -300 (USD -38.62) is invalid, use instead HKD -300 (USD 38.62)
 - max amount is 10^32 with 4 decimal places
 - for see examples of valid and invalid messages type "help"
+- for debug configuration use VM option -Dconfig.resource=debug.conf
 
 elaboration
 -----------
@@ -70,4 +71,6 @@ appending to file newest messages, added transaction logic with tests, pattern c
 adding scheduler for regular output, creating list of payment messages for output
 adding test for output payment messages, 
 correcting messages and actors ownership, fixed zero when creating payment track, replacing junit by testng
-solving problem with duplicit loading files, routing based on interfaces, reading different that default file
+solving problem with duplicate loading files, routing based on interfaces, reading different that default file
+
+28.9.15 default configuration without debugging config, building project into jar
