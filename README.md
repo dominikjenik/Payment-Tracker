@@ -52,7 +52,7 @@ How to install and run
 2. 'cd Payment-Tracker' directory
 3. 'mvn package'
 4. 'cd target' folder
-5. 'java -jar payment_tracker-1.0-jar-with-dependencies.jar' [input filename] 
+5. 'java -jar payment_tracker-1.0-jar-with-dependencies.jar [input filename]' 
 
 Assumptions for running the program
 -----------------------------------
