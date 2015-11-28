@@ -46,14 +46,14 @@ class TransactionCounterActor extends UntypedActor {
         String paymentCurrency = matcher.getPaymentCurrency();
         BigDecimal paymentAmount = new BigDecimal(matcher.getPaymentAmount());
         if (currencyToAmount.get(paymentCurrency) == null) {
-            currencyToAmount.put(paymentCurrency, paymentAmount);
+            currencyToAmount.put(paymentCurrency, paymentAmount.stripTrailingZeros());
         } else {
-            currencyToAmount.put(paymentCurrency, currencyToAmount.get(paymentCurrency).add(paymentAmount));
+            currencyToAmount.put(paymentCurrency, currencyToAmount.get(paymentCurrency).add(paymentAmount).stripTrailingZeros());
         }
         String paymentInUsd = matcher.getPaymentInUSD();
         if (paymentInUsd != null) {
-            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
-            currencyToExchangeRate.put(paymentCurrency, conversionRate);
+            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP);
+            currencyToExchangeRate.put(paymentCurrency, conversionRate .stripTrailingZeros());
         }
     }
 
