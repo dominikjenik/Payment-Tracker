@@ -1,5 +1,7 @@
 package messages;
 
+import extraction.PaymentMessageMatcher;
+
 import java.util.regex.Pattern;
 
 /**
@@ -12,11 +14,6 @@ public class PaymentMessage {
     private final static String INPUT_PATTERN_STRING =
             "^(?!USD.*USD)([A-Z]{3})\\ *([+-]?(" + CASH_PATTERN + "))\\ *(\\(USD\\ *(" + CASH_PATTERN + ")\\))?$";
     public final static Pattern inputPattern = Pattern.compile(INPUT_PATTERN_STRING);
-
-    public static final int PAYMENT_CURRENCY_GROUP_IN_PATTERN = 1;
-    public static final int PAYMENT_AMOUNT_GROUP_IN_PATTERN = 2;
-    public static final int PAYMENT_IN_USD_GROUP_IN_PATTERN = 6;
-
     private final String message;
     private boolean saveToFile=true;
 
@@ -34,5 +31,9 @@ public class PaymentMessage {
 
     public boolean isSaveToFile() {
         return saveToFile;
+    }
+
+    public PaymentMessageMatcher getMatcher() {
+        return new PaymentMessageMatcher(this);
     }
 }

@@ -1,6 +1,8 @@
 package actors;
 
 import com.google.common.collect.Maps;
+import messages.MessagesFactory;
+import messages.NotMatchPaymentPatternGetMessage;
 import messages.PaymentMessage;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -11,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import static actors.TransactionCounter.getPaymentMessages;
-import static actors.TransactionCounter.performTransaction;
 
 /**
  * Created by Jenik on 11/27/2015.
@@ -27,6 +28,10 @@ public class TransactionCounterTest {
         currencyToAmount = Maps.newHashMap();
         exchangeRateFromXToUsd = Maps.newHashMap();
         currencyToExchangeRate = Maps.newHashMap();
+    }
+
+    private static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount,  Map<String, BigDecimal> currencyToExchangeRate) throws NotMatchPaymentPatternGetMessage {
+        TransactionCounter.performTransaction(MessagesFactory.newPaymentMessage(message),currencyToAmount,currencyToExchangeRate);
     }
 
     @Test

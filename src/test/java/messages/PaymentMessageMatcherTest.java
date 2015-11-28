@@ -1,9 +1,8 @@
 package messages;
 
+import extraction.PaymentMessageMatcher;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.regex.Matcher;
 
 import static messages.PaymentMessage.*;
 
@@ -11,23 +10,21 @@ import static messages.PaymentMessage.*;
 /**
  * Created by Jenik on 11/27/2015.
  */
-public class PaymentMessageTest {
+public class PaymentMessageMatcherTest {
 
     @Test
     public void testGroupsInMatcher() throws NotMatchPaymentPatternGetMessage {
-        Matcher matcher = inputPattern.matcher("RMB 2000 (USD 314.60)");
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals(matcher.group(0), "RMB 2000 (USD 314.60)");
-        Assert.assertEquals(matcher.group(PAYMENT_CURRENCY_GROUP_IN_PATTERN), "RMB");
-        Assert.assertEquals(matcher.group(PAYMENT_AMOUNT_GROUP_IN_PATTERN), "2000");
-        Assert.assertEquals(matcher.group(PAYMENT_IN_USD_GROUP_IN_PATTERN), "314.60");
+        PaymentMessageMatcher matcher = new PaymentMessageMatcher(MessagesFactory.newPaymentMessage("RMB 2000 (USD 314.60)"));
+        Assert.assertEquals(matcher.getFullMessage(), "RMB 2000 (USD 314.60)");
+        Assert.assertEquals(matcher.getPaymentCurrency(), "RMB");
+        Assert.assertEquals(matcher.getPaymentAmount(), "2000");
+        Assert.assertEquals(matcher.getPaymentInUSD(), "314.60");
 
-        matcher = inputPattern.matcher("RMB 2000");
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals(matcher.group(0), "RMB 2000");
-        Assert.assertEquals(matcher.group(PAYMENT_CURRENCY_GROUP_IN_PATTERN), "RMB");
-        Assert.assertEquals(matcher.group(PAYMENT_AMOUNT_GROUP_IN_PATTERN), "2000");
-        Assert.assertEquals(matcher.group(PAYMENT_IN_USD_GROUP_IN_PATTERN), null);
+        matcher = MessagesFactory.newPaymentMessage("RMB 2000").getMatcher();
+        Assert.assertEquals(matcher.getFullMessage(), "RMB 2000");
+        Assert.assertEquals(matcher.getPaymentCurrency(), "RMB");
+        Assert.assertEquals(matcher.getPaymentAmount(), "2000");
+        Assert.assertEquals(matcher.getPaymentInUSD(), null);
     }
 
     @Test

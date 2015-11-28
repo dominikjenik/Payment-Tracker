@@ -3,15 +3,18 @@ package actors;
 import akka.actor.UntypedActor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import messages.*;
+import extraction.PaymentMessageMatcher;
+import messages.MessagesFactory;
+import messages.NotMatchPaymentPatternGetMessage;
+import messages.PaymentMessage;
+import messages.TickMessage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
-import static messages.PaymentMessage.*;
+import static messages.PaymentMessage.DIGITS_AFTER_DOT;
 
 /**
  * Created by Jenik on 11/27/2015.
@@ -37,18 +40,17 @@ public class TransactionCounter extends UntypedActor {
         return paymentMessages;
     }
 
-    public static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount,
+    public static void performTransaction(PaymentMessage paymentMessage, Map<String, BigDecimal> currencyToAmount,
                                           Map<String, BigDecimal> currencyToExchangeRate) {
-        Matcher matcher = PaymentMessage.inputPattern.matcher(message);
-        matcher.find();
-        String paymentCurrency = matcher.group(PAYMENT_CURRENCY_GROUP_IN_PATTERN);
-        BigDecimal paymentAmount = new BigDecimal(matcher.group(PAYMENT_AMOUNT_GROUP_IN_PATTERN));
+        PaymentMessageMatcher matcher=paymentMessage.getMatcher();
+        String paymentCurrency = matcher.getPaymentCurrency();
+        BigDecimal paymentAmount = new BigDecimal(matcher.getPaymentAmount());
         if (currencyToAmount.get(paymentCurrency) == null) {
             currencyToAmount.put(paymentCurrency, paymentAmount);
         } else {
             currencyToAmount.put(paymentCurrency, currencyToAmount.get(paymentCurrency).add(paymentAmount));
         }
-        String paymentInUsd = matcher.group(PAYMENT_IN_USD_GROUP_IN_PATTERN);
+        String paymentInUsd = matcher.getPaymentInUSD();
         if (paymentInUsd != null) {
             BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs());
             currencyToExchangeRate.put(paymentCurrency, conversionRate);
@@ -58,7 +60,7 @@ public class TransactionCounter extends UntypedActor {
     @Override
     public void onReceive(Object o) throws Exception {
         if (o instanceof PaymentMessage) {
-            performTransaction(((PaymentMessage) o).getMessage(), currencyToAmount, exchangeRateFromXToUsd);
+            performTransaction(((PaymentMessage) o), currencyToAmount, exchangeRateFromXToUsd);
             getSender().tell(MessagesFactory.newSavePaymentMessage((PaymentMessage) o), getSelf());
         } else if (o instanceof TickMessage) {
             List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
