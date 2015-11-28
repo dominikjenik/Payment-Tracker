@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Jenik on 11/24/2015.
  */
-public class Router extends UntypedActor {
-    public static final FiniteDuration LIST_PAYMENTS_TO_OUTPUT_PERIOD_IN_SECONDS = Duration.create(50, TimeUnit.SECONDS);
-    private ActorRef fileHandler = getContext().actorOf(Props.create(FileHandler.class), FileHandler.class.getName());
-    private ActorRef consoleOutputer = getContext().actorOf(Props.create(ConsoleOutputer.class), ConsoleOutputer.class.getName());
-    private ActorRef transactionCounter = getContext().actorOf(Props.create(TransactionCounter.class), TransactionCounter.class.getName());
+public class RouterActor extends UntypedActor {
+    private static final FiniteDuration LIST_PAYMENTS_TO_OUTPUT_PERIOD_IN_SECONDS = Duration.create(50, TimeUnit.SECONDS);
+    private final ActorRef fileHandler = getContext().actorOf(Props.create(FileHandlerActor.class), FileHandlerActor.class.getName());
+    private final ActorRef consoleOutputActor = getContext().actorOf(Props.create(ConsoleOutputActor.class), ConsoleOutputActor.class.getName());
+    private final ActorRef transactionCounter = getContext().actorOf(Props.create(TransactionCounterActor.class), TransactionCounterActor.class.getName());
 
     @Override
     public void preStart() throws Exception {
@@ -33,7 +33,7 @@ public class Router extends UntypedActor {
     @Override
     public void onReceive(Object o) throws Exception {
         if (o instanceof ConsoleMessageI) {
-            consoleOutputer.tell(o, getSelf());
+            consoleOutputActor.tell(o, getSelf());
         } else if (o instanceof PaymentMessage || o instanceof TickMessage) {
             transactionCounter.tell(o, getSelf());
         } else if (o instanceof FileHandlerMessageI) {

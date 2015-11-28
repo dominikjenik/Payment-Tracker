@@ -59,7 +59,7 @@ elaboration
 -----------
 24.9.15 created project, github dir, added default akka config
 
-25.9.15 thread for console output received from inbox, sending messages from user to actors.Router
+25.9.15 thread for console output received from inbox, sending messages from user to actors.RouterActor
 
 26.9.15 added debug logging, added quit msg, created input pattern
 

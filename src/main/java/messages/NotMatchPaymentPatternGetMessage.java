@@ -7,7 +7,7 @@ import messages.interfaces.ConsoleMessageI;
  */
 public class NotMatchPaymentPatternGetMessage extends Exception implements ConsoleMessageI {
     private final String message;
-    private String errorMessage;
+    private final String errorMessage;
 
     NotMatchPaymentPatternGetMessage(String message, String errorMessage) {
         this.message = message;

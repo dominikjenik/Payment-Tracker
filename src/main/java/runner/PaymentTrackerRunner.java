@@ -1,6 +1,6 @@
 package runner;
 
-import actors.Router;
+import actors.RouterActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Inbox;
@@ -9,6 +9,8 @@ import com.typesafe.config.ConfigFactory;
 import messages.*;
 
 import java.util.Scanner;
+
+import static logging.OutputMessages.*;
 
 /**
  * Created by Jenik on 11/24/2015.
@@ -21,17 +23,16 @@ public class PaymentTrackerRunner {
     public static final String PAYMENT_TRACKER_SYSTEM = "PaymentTracker";
 
     public static void main(String[] args)  {
-        System.out.println("loading...");
+        System.out.println(LOADING_MESSAGE);
         ActorSystem system = ActorSystem.create(PAYMENT_TRACKER_SYSTEM, ConfigFactory.defaultApplication());
-        ActorRef router = system.actorOf(Props.create(Router.class), Router.class.getName());
+        ActorRef router = system.actorOf(Props.create(RouterActor.class), RouterActor.class.getName());
         Inbox inbox = Inbox.create(system);
-        System.out.println("Welcome to "+PAYMENT_TRACKER_SYSTEM);
-        System.out.println("=========================");
-        System.out.println("anytime use 'help' to get instructions");
-        System.out.println("Would you like to change default file? y/n");
+        System.out.println(
+                WELCOME_MESSAGE);
+        System.out.println(LOAD_FILE_MESSAGE);
         Scanner in = new Scanner(System.in);
         if ("y".equals(in.nextLine())) {
-            System.out.println("Please write new file name:");
+            System.out.println(PLEASE_WRITE_NEW_FILE_NAME_MESSAGE);
             String input = in.nextLine();
             inbox.send(router, MessagesFactory.newReadFileMessage(input));
         } else {
@@ -51,12 +52,13 @@ public class PaymentTrackerRunner {
                 continue;
             }
             try {
-                inbox.send(router, MessagesFactory.newPaymentMessage(line, "Wrong format of input from console. "));
+                inbox.send(router, MessagesFactory.newPaymentMessage(line, WRONG_FORMAT_OF_INPUT_MESSAGE));
             } catch (NotMatchPaymentPatternGetMessage e) {
                 inbox.send(router, e);
             }
         }
-        System.out.println("closing...");
+        System.out.println(CLOSING_MESSAGE);
         system.terminate();
     }
+
 }

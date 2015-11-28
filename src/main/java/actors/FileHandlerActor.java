@@ -1,6 +1,7 @@
 package actors;
 
 import akka.actor.UntypedActor;
+import logging.OutputMessages;
 import messages.*;
 import org.apache.commons.io.FileUtils;
 
@@ -10,7 +11,7 @@ import java.io.FileNotFoundException;
 /**
  * Created by dj on 26.11.2015.
  */
-public class FileHandler extends UntypedActor {
+class FileHandlerActor extends UntypedActor {
     private File file;
 
     @Override
@@ -24,9 +25,8 @@ public class FileHandler extends UntypedActor {
                         continue;
                     }
                     try {
-                        getSender().tell(MessagesFactory.newPaymentMessage(line,
-                                "Could not load from file '" + file.getAbsolutePath() + "'.",
-                                false), getSelf());
+                        getSender().tell(MessagesFactory.newPaymentMessageDoNotSaveToFile(line,
+                                OutputMessages.WRONG_FORMAT_OF_INPUT_MESSAGE +"Could not load from file '" + file.getAbsolutePath() + "'."), getSelf());
                     } catch (NotMatchPaymentPatternGetMessage e) {
                         getSender().tell(e, getSelf());
                     }

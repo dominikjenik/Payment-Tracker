@@ -19,9 +19,9 @@ import static messages.PaymentMessage.DIGITS_AFTER_DOT;
 /**
  * Created by Jenik on 11/27/2015.
  */
-public class TransactionCounter extends UntypedActor {
-    private Map<String, BigDecimal> currencyToAmount = Maps.newHashMap();
-    private Map<String, BigDecimal> exchangeRateFromXToUsd = Maps.newHashMap();
+class TransactionCounterActor extends UntypedActor {
+    private final Map<String, BigDecimal> currencyToAmount = Maps.newHashMap();
+    private final Map<String, BigDecimal> exchangeRateFromXToUsd = Maps.newHashMap();
 
     public static List<PaymentMessage> getPaymentMessages(Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> exchangeRateFromXToUsd) throws NotMatchPaymentPatternGetMessage {
         List<PaymentMessage> paymentMessages = Lists.newArrayList();

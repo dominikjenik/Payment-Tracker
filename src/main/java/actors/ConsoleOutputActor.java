@@ -6,7 +6,7 @@ import messages.interfaces.ConsoleMessageI;
 /**
  * Created by Jenik on 11/25/2015.
  */
-public class ConsoleOutputer extends UntypedActor {
+class ConsoleOutputActor extends UntypedActor {
 
     @Override
     public void onReceive(Object o) throws Exception {

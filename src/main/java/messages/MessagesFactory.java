@@ -6,8 +6,8 @@ import java.util.List;
  * Created by Jenik on 11/28/2015.
  */
 public class MessagesFactory {
-    public static PaymentMessage newPaymentMessage(String message, String errorMessage, boolean saveToFile) throws NotMatchPaymentPatternGetMessage {
-        return new PaymentMessage(message, errorMessage, saveToFile);
+    public static PaymentMessage newPaymentMessageDoNotSaveToFile(String message, String errorMessage) throws NotMatchPaymentPatternGetMessage {
+        return new PaymentMessage(message, errorMessage, false);
     }
 
     public static PaymentMessage newPaymentMessage(String message, String errorMessage) throws NotMatchPaymentPatternGetMessage {

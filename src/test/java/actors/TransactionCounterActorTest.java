@@ -12,12 +12,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static actors.TransactionCounter.getPaymentMessages;
+import static actors.TransactionCounterActor.getPaymentMessages;
 
 /**
  * Created by Jenik on 11/27/2015.
  */
-public class TransactionCounterTest {
+public class TransactionCounterActorTest {
 
     private Map<String, BigDecimal> exchangeRateFromXToUsd;
     private Map<String, BigDecimal> currencyToExchangeRate;
@@ -31,7 +31,7 @@ public class TransactionCounterTest {
     }
 
     private static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount,  Map<String, BigDecimal> currencyToExchangeRate) throws NotMatchPaymentPatternGetMessage {
-        TransactionCounter.performTransaction(MessagesFactory.newPaymentMessage(message),currencyToAmount,currencyToExchangeRate);
+        TransactionCounterActor.performTransaction(MessagesFactory.newPaymentMessage(message),currencyToAmount,currencyToExchangeRate);
     }
 
     @Test
