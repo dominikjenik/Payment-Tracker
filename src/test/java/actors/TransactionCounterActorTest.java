@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +24,15 @@ public class TransactionCounterActorTest {
     private Map<String, BigDecimal> currencyToExchangeRate;
     private Map<String, BigDecimal> currencyToAmount;
 
+    private static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> currencyToExchangeRate) throws NotMatchPaymentPatternGetMessage {
+        TransactionCounterActor.performTransaction(MessagesFactory.newPaymentMessage(message), currencyToAmount, currencyToExchangeRate);
+    }
+
     @BeforeMethod
     public void setUp() throws Exception {
         currencyToAmount = Maps.newHashMap();
         exchangeRateFromXToUsd = Maps.newHashMap();
         currencyToExchangeRate = Maps.newHashMap();
-    }
-
-    private static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount,  Map<String, BigDecimal> currencyToExchangeRate) throws NotMatchPaymentPatternGetMessage {
-        TransactionCounterActor.performTransaction(MessagesFactory.newPaymentMessage(message),currencyToAmount,currencyToExchangeRate);
     }
 
     @Test
@@ -118,5 +119,15 @@ public class TransactionCounterActorTest {
         currencyToAmount.put("USD", new BigDecimal(0));
         List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(paymentMessages.size(), 0);
+    }
+
+    @Test
+    public void testTransactionEURtoUSDwhereUSDisLowerThanEUR() throws Exception {
+        performTransaction("EUR 300 (USD 100)", currencyToAmount, currencyToExchangeRate);
+        Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal(300));
+        Assert.assertEquals(currencyToExchangeRate.get("EUR"), new BigDecimal(100).divide(new BigDecimal(300), PaymentMessage.DIGITS_AFTER_DOT, RoundingMode.HALF_UP));
+        Assert.assertEquals(currencyToAmount.size(), 1);
+        Assert.assertEquals(currencyToExchangeRate.size(), 1);
+
     }
 }

@@ -52,7 +52,7 @@ class TransactionCounterActor extends UntypedActor {
         }
         String paymentInUsd = matcher.getPaymentInUSD();
         if (paymentInUsd != null) {
-            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs());
+            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP);
             currencyToExchangeRate.put(paymentCurrency, conversionRate);
         }
     }
