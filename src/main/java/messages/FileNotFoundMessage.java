@@ -13,6 +13,6 @@ public class FileNotFoundMessage implements ConsoleMessageI {
     }
 
     public String getMessage() {
-        return "File: "+file+" not found.";
+        return "File: "+file+" not found. Nothing to read from.";
     }
 }

@@ -48,7 +48,7 @@ HKD 300 (USD 38.62)
 
 How to install and run
 ----------------------
-1. 'git clone https://github.com/dominikjenik/Payment-Tracker.git'
+1. 'git clone https://github.com/dominikjenik/Payment-Tracker.git' or download manually
 2. 'cd Payment-Tracker' directory
 3. 'mvn package'
 4. 'cd target' folder
@@ -56,8 +56,8 @@ How to install and run
 
 Assumptions for running the program
 -----------------------------------
-java 8
-maven 3.x
+java 8  
+maven 3.x  
 
 Assumptions
 -----------

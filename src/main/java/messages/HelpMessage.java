@@ -51,17 +51,21 @@ public class HelpMessage implements ConsoleMessageI {
     }
 
     public String getMessage() {
-        return "List of examples of valid messages:" +
+        return "\nList of examples of valid messages:\n" +
                 validList +
-                "\n" +
-                "List of examples of not allowed messages:" +
+                "\n\n" +
+                "List of examples of not allowed messages:\n" +
                 invalidList +
-                "\n" +
-                "List of invalid commands: " +
+                "\n\n" +
+                "List of valid commands: " +
                 PaymentTrackerRunner.HELP_MESSAGE +
                 ", " +
                 PaymentTrackerRunner.PRINT_MESSAGE +
                 ", " +
-                PaymentTrackerRunner.TERMINATE_MESSAGE;
+                PaymentTrackerRunner.TERMINATE_MESSAGE +
+                " and any valid message which correspond to the pattern: " +
+                "\n3 UPPER CASE LETTERS representing currency followed by " +
+                "\nAMOUNT of money (max 32 digits, with 4 decimal places separated by dot) optionally followed by " +
+                "\n(USD EXCHANGE) where EXCHANGE is amount of USD equivalent to AMOUNT ";
     }
 }
