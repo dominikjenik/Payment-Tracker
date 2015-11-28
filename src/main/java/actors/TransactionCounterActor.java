@@ -15,25 +15,28 @@ import java.util.List;
 import java.util.Map;
 
 import static messages.PaymentMessage.DIGITS_AFTER_DOT;
+import static messages.PaymentMessage.DIGITS_BEFORE_DOT;
 
 /**
  * Created by Jenik on 11/27/2015.
  */
 class TransactionCounterActor extends UntypedActor {
     private final Map<String, BigDecimal> currencyToAmount = Maps.newHashMap();
-    private final Map<String, BigDecimal> exchangeRateFromXToUsd = Maps.newHashMap();
+    private final Map<String, BigDecimal> currencyToExchangeRate = Maps.newHashMap();
 
-    public static List<PaymentMessage> getPaymentMessages(Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> exchangeRateFromXToUsd) throws NotMatchPaymentPatternGetMessage {
+    public static List<PaymentMessage> getPaymentMessages(Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> currencyToExchangeRate) throws NotMatchPaymentPatternGetMessage {
         List<PaymentMessage> paymentMessages = Lists.newArrayList();
         for (Map.Entry<String, BigDecimal> currencyAndAmount : currencyToAmount.entrySet()) {
             String conversion = "";
             if (currencyAndAmount.getValue().equals(BigDecimal.ZERO)) {
                 continue;
             }
-            if (exchangeRateFromXToUsd.get(currencyAndAmount.getKey()) != null) {
-                BigDecimal exchangedToDollar = currencyAndAmount.getValue().multiply(exchangeRateFromXToUsd.get(currencyAndAmount.getKey()))
+            if (currencyToExchangeRate.get(currencyAndAmount.getKey()) != null) {
+                BigDecimal exchangedToDollar = currencyAndAmount.getValue().multiply(currencyToExchangeRate.get(currencyAndAmount.getKey()))
                         .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs().stripTrailingZeros();
-                conversion = " (USD " + exchangedToDollar.toPlainString() + ")";
+                if (!exchangedToDollar.equals(BigDecimal.ZERO)){
+                    conversion = " (USD " + exchangedToDollar.toPlainString() + ")";
+                }
             }
             paymentMessages.add(MessagesFactory.newPaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
         }
@@ -52,7 +55,7 @@ class TransactionCounterActor extends UntypedActor {
         }
         String paymentInUsd = matcher.getPaymentInUSD();
         if (paymentInUsd != null) {
-            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP);
+            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_BEFORE_DOT+DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP);
             currencyToExchangeRate.put(paymentCurrency, conversionRate .stripTrailingZeros());
         }
     }
@@ -60,10 +63,10 @@ class TransactionCounterActor extends UntypedActor {
     @Override
     public void onReceive(Object o) throws Exception {
         if (o instanceof PaymentMessage) {
-            performTransaction(((PaymentMessage) o), currencyToAmount, exchangeRateFromXToUsd);
+            performTransaction(((PaymentMessage) o), currencyToAmount, currencyToExchangeRate);
             getSender().tell(MessagesFactory.newSavePaymentMessage((PaymentMessage) o), getSelf());
         } else if (o instanceof TickMessage) {
-            List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
+            List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, currencyToExchangeRate);
             getSender().tell(MessagesFactory.newPaymentsOverviewMessage(paymentMessages), getSelf());
         } else {
             unhandled(o);
