@@ -88,3 +88,5 @@ solving problem with duplicate loading files, routing based on interfaces, readi
 
 28.9.15 default configuration without debugging config, building project into jar,
 added Factory design pattern, adding PaymentMessageMatcher to avoid multiple calling .group method
+
+29.9.15 bug fixes-addBigValuesOverLimit, addMaxValueToExchangeAmountAndIncreaseAmount

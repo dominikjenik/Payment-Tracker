@@ -167,9 +167,15 @@ public class TransactionCounterActorTest {
 
     @Test
     public void isUnderTheMaxValueFunctionTest(){
-        Assert.assertFalse(isUnderTheMaxValue(new BigDecimal("10e"+(1+PaymentMessage.DIGITS_BEFORE_DOT))));
-        Assert.assertFalse(isUnderTheMaxValue(new BigDecimal("10e"+(2+PaymentMessage.DIGITS_BEFORE_DOT))));
-        Assert.assertTrue(isUnderTheMaxValue(new BigDecimal("10e"+(1+PaymentMessage.DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)));
-        Assert.assertTrue(isUnderTheMaxValue(new BigDecimal("10e"+(PaymentMessage.DIGITS_BEFORE_DOT))));
+        Assert.assertFalse(isUnderTheMaxValue(new BigDecimal("1e"+(PaymentMessage.DIGITS_BEFORE_DOT))));
+        Assert.assertTrue(isUnderTheMaxValue(new BigDecimal("1e"+(PaymentMessage.DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)));
+    }
+
+    @Test
+    public void addBigValuesOverLimit() throws NotMatchPaymentPatternGetMessage {
+        performTransaction("XXX 52345678901234567890123456789012", currencyToAmount, exchangeRateFromXToUsd);
+        performTransaction("XXX 52345678901234567890123456789012", currencyToAmount, exchangeRateFromXToUsd);
+        List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
+        Assert.assertEquals(paymentMessages.size(),0);
     }
 }

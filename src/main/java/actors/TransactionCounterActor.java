@@ -28,19 +28,20 @@ class TransactionCounterActor extends UntypedActor {
         List<PaymentMessage> paymentMessages = Lists.newArrayList();
         for (Map.Entry<String, BigDecimal> currencyAndAmount : currencyToAmount.entrySet()) {
             String conversion = "";
-            if (currencyAndAmount.getValue().equals(BigDecimal.ZERO)) {
+            if (currencyAndAmount.getValue().equals(BigDecimal.ZERO) ||
+                    !isUnderTheMaxValue(currencyAndAmount.getValue())) {
                 continue;
             }
             if (currencyToExchangeRate.get(currencyAndAmount.getKey()) != null) {
                 BigDecimal exchangedToDollar = currencyAndAmount.getValue().multiply(currencyToExchangeRate.get(currencyAndAmount.getKey()))
                         .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs().stripTrailingZeros();
-                if (!exchangedToDollar.equals(BigDecimal.ZERO)&&isUnderTheMaxValue(exchangedToDollar)){
+                if (!exchangedToDollar.equals(BigDecimal.ZERO) && isUnderTheMaxValue(exchangedToDollar)) {
                     conversion = " (USD " + exchangedToDollar.toPlainString() + ")";
                 }
             }
-            try{
+            try {
                 paymentMessages.add(MessagesFactory.newPaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
-            } catch (NotMatchPaymentPatternGetMessage e){
+            } catch (NotMatchPaymentPatternGetMessage e) {
                 e.printStackTrace();
             }
         }
@@ -48,12 +49,12 @@ class TransactionCounterActor extends UntypedActor {
     }
 
     public static boolean isUnderTheMaxValue(BigDecimal exchangedToDollar) {
-        return exchangedToDollar.min(new BigDecimal("10e"+(1+DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)).equals(exchangedToDollar);
+        return exchangedToDollar.min(new BigDecimal("1e" + (DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)).equals(exchangedToDollar);
     }
 
     public static void performTransaction(PaymentMessage paymentMessage, Map<String, BigDecimal> currencyToAmount,
                                           Map<String, BigDecimal> currencyToExchangeRate) {
-        PaymentMessageMatcher matcher=paymentMessage.getMatcher();
+        PaymentMessageMatcher matcher = paymentMessage.getMatcher();
         String paymentCurrency = matcher.getPaymentCurrency();
         BigDecimal paymentAmount = new BigDecimal(matcher.getPaymentAmount());
         if (currencyToAmount.get(paymentCurrency) == null) {
@@ -63,8 +64,8 @@ class TransactionCounterActor extends UntypedActor {
         }
         String paymentInUsd = matcher.getPaymentInUSD();
         if (paymentInUsd != null) {
-            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(),DIGITS_BEFORE_DOT+DIGITS_AFTER_DOT,BigDecimal.ROUND_HALF_UP);
-            currencyToExchangeRate.put(paymentCurrency, conversionRate .stripTrailingZeros());
+            BigDecimal conversionRate = new BigDecimal(paymentInUsd).divide(paymentAmount.abs(), DIGITS_BEFORE_DOT + DIGITS_AFTER_DOT, BigDecimal.ROUND_HALF_UP);
+            currencyToExchangeRate.put(paymentCurrency, conversionRate.stripTrailingZeros());
         }
     }
 
