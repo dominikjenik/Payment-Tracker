@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static actors.TransactionCounterActor.getPaymentMessages;
+import static actors.TransactionCounterActor.isUnderTheMaxValue;
 
 /**
  * Created by Jenik on 11/27/2015.
@@ -21,7 +22,6 @@ import static actors.TransactionCounterActor.getPaymentMessages;
 public class TransactionCounterActorTest {
 
     private Map<String, BigDecimal> exchangeRateFromXToUsd;
-    private Map<String, BigDecimal> currencyToExchangeAmount;
     private Map<String, BigDecimal> currencyToAmount;
 
     private static void performTransaction(String message, Map<String, BigDecimal> currencyToAmount, Map<String, BigDecimal> currencyToExchangeAmount) throws NotMatchPaymentPatternGetMessage {
@@ -32,59 +32,58 @@ public class TransactionCounterActorTest {
     public void setUp() throws Exception {
         currencyToAmount = Maps.newHashMap();
         exchangeRateFromXToUsd = Maps.newHashMap();
-        currencyToExchangeAmount = Maps.newHashMap();
     }
 
     @Test
     public void twoTimesAddTheSame() throws Exception {
-        performTransaction("USD 200", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("USD 200", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("USD").toPlainString(), "200");
-        Assert.assertEquals(currencyToExchangeAmount.get("USD"), null);
+        Assert.assertEquals(exchangeRateFromXToUsd.get("USD"), null);
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 0);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 0);
 
-        performTransaction("USD 200", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("USD 200", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("USD").toPlainString(), "400");
-        Assert.assertEquals(currencyToExchangeAmount.get("USD"), null);
+        Assert.assertEquals(exchangeRateFromXToUsd.get("USD"), null);
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 0);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 0);
     }
 
     @Test
     public void addingLowestPossibleValue() throws Exception {
-        performTransaction("EUR 100", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR 100", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR").toPlainString(), "100");
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), null);
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), null);
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 0);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 0);
 
-        performTransaction("EUR -100 (USD 250)", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR -100 (USD 250)", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal(0));
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), new BigDecimal(2.5));
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), new BigDecimal(2.5));
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 1);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 1);
 
-        performTransaction("EUR 0.0001", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR 0.0001", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal("0.0001"));
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), new BigDecimal(2.5));
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), new BigDecimal(2.5));
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 1);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 1);
     }
 
     @Test
     public void twoTimesAddingBigNumber() throws Exception {
         String bigNumber = "12345678901234567890123456789012.0001";
-        performTransaction("EUR " + bigNumber, currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR " + bigNumber, currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal(bigNumber));
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), null);
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), null);
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 0);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 0);
 
-        performTransaction("EUR " + bigNumber, currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR " + bigNumber, currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal(bigNumber).multiply(new BigDecimal(2)));
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), null);
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), null);
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 0);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 0);
 
     }
 
@@ -132,30 +131,45 @@ public class TransactionCounterActorTest {
 
     @Test
     public void testTransactionEURtoUSDwhereUSDisLowerThanEUR() throws Exception {
-        performTransaction("EUR 300 (USD 100)", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR 300 (USD 100)", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR").toPlainString(), "300");
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR"), new BigDecimal(100).divide(new BigDecimal(300), PaymentMessage.DIGITS_BEFORE_DOT+PaymentMessage.DIGITS_AFTER_DOT, RoundingMode.HALF_UP));
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR"), new BigDecimal(100).divide(new BigDecimal(300), PaymentMessage.DIGITS_BEFORE_DOT+PaymentMessage.DIGITS_AFTER_DOT, RoundingMode.HALF_UP));
         Assert.assertEquals(currencyToAmount.size(), 1);
-        Assert.assertEquals(currencyToExchangeAmount.size(), 1);
+        Assert.assertEquals(exchangeRateFromXToUsd.size(), 1);
     }
 
     @Test
     public void testTrailingZeros() throws Exception {
-        performTransaction("EUR 0.01", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR 0.01", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal("0.01"));
-        performTransaction("EUR -1.01", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR -1.01", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR"), new BigDecimal("-1"));
 
-        performTransaction("USD 0.0100", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("USD 0.0100", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("USD"), new BigDecimal("0.01"));
     }
 
     @Test
     public void addingCurrencyValueCloseToZero() throws Exception {
-        performTransaction("EUR 200 (USD 0.0001)", currencyToAmount, currencyToExchangeAmount);
-        performTransaction("EUR -100", currencyToAmount, currencyToExchangeAmount);
+        performTransaction("EUR 200 (USD 0.0001)", currencyToAmount, exchangeRateFromXToUsd);
+        performTransaction("EUR -100", currencyToAmount, exchangeRateFromXToUsd);
         Assert.assertEquals(currencyToAmount.get("EUR").toPlainString(), "100");
-        Assert.assertEquals(currencyToExchangeAmount.get("EUR").toPlainString(), "0.0000005");
+        Assert.assertEquals(exchangeRateFromXToUsd.get("EUR").toPlainString(), "0.0000005");
+    }
 
+    @Test
+    public void addMaxValueToExchangeAmountAndIncreaseAmount() throws NotMatchPaymentPatternGetMessage {
+        performTransaction("XXX 0.0001 (USD 12345678901234567890123456789012)", currencyToAmount, exchangeRateFromXToUsd);
+        performTransaction("XXX 10", currencyToAmount, exchangeRateFromXToUsd);
+        List<PaymentMessage> paymentMessages = getPaymentMessages(currencyToAmount, exchangeRateFromXToUsd);
+        Assert.assertEquals(paymentMessages.size(),1);
+    }
+
+    @Test
+    public void isUnderTheMaxValueFunctionTest(){
+        Assert.assertFalse(isUnderTheMaxValue(new BigDecimal("10e"+(1+PaymentMessage.DIGITS_BEFORE_DOT))));
+        Assert.assertFalse(isUnderTheMaxValue(new BigDecimal("10e"+(2+PaymentMessage.DIGITS_BEFORE_DOT))));
+        Assert.assertTrue(isUnderTheMaxValue(new BigDecimal("10e"+(1+PaymentMessage.DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)));
+        Assert.assertTrue(isUnderTheMaxValue(new BigDecimal("10e"+(PaymentMessage.DIGITS_BEFORE_DOT))));
     }
 }

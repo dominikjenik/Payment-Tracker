@@ -34,13 +34,21 @@ class TransactionCounterActor extends UntypedActor {
             if (currencyToExchangeRate.get(currencyAndAmount.getKey()) != null) {
                 BigDecimal exchangedToDollar = currencyAndAmount.getValue().multiply(currencyToExchangeRate.get(currencyAndAmount.getKey()))
                         .setScale(DIGITS_AFTER_DOT, RoundingMode.HALF_UP).abs().stripTrailingZeros();
-                if (!exchangedToDollar.equals(BigDecimal.ZERO)){
+                if (!exchangedToDollar.equals(BigDecimal.ZERO)&&isUnderTheMaxValue(exchangedToDollar)){
                     conversion = " (USD " + exchangedToDollar.toPlainString() + ")";
                 }
             }
-            paymentMessages.add(MessagesFactory.newPaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
+            try{
+                paymentMessages.add(MessagesFactory.newPaymentMessage(currencyAndAmount.getKey() + " " + currencyAndAmount.getValue().toPlainString() + conversion));
+            } catch (NotMatchPaymentPatternGetMessage e){
+                e.printStackTrace();
+            }
         }
         return paymentMessages;
+    }
+
+    public static boolean isUnderTheMaxValue(BigDecimal exchangedToDollar) {
+        return exchangedToDollar.min(new BigDecimal("10e"+(1+DIGITS_BEFORE_DOT)).subtract(BigDecimal.ONE)).equals(exchangedToDollar);
     }
 
     public static void performTransaction(PaymentMessage paymentMessage, Map<String, BigDecimal> currencyToAmount,
